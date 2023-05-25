@@ -1,30 +1,12 @@
-import { PluginOption, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import viteCompression from 'vite-plugin-compression';
 import { resolve } from 'path';
 import qiankun from 'vite-plugin-qiankun';
-import html from "@rollup/plugin-html";
 import fs from 'fs';
 const { name } = require('./package');
 const entryHtml = fs.readFileSync("./index.html", { encoding: "utf-8" });
 // useDevMode 开启时与热更新插件冲突,使用变量切换
 const useDevMode = true
-
-// const buildHtmlMeta = (mode: string): PluginOption | any => {
-//   return mode === 'production' ? {
-//     name: "build html",
-//     apply: "build",
-//     ...html({
-//       template: () => {
-//         return entryHtml
-//           .replace(
-//             '<script type="module" src="/src/main.tsx"></script>',
-//             `<script type="text/javascript" src="${name}.umd.cjs"></script>`,
-//           );
-//       },
-//     }),
-//   } : {}
-// } 
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -36,14 +18,6 @@ export default defineConfig(({ mode }) => {
         exposedHeaders: [
           'Access-Control-Allow-Origin: *',
         ],
-      },
-      proxy: {
-        '/api': {
-          // target: 'http://10.250.220.255:9091/api',  // 赵桥旺本地
-          target: 'https://console-test.playernetwork.intlgame.com/api', // 测试环境
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
-        }
       }
     },
     css: {
@@ -62,15 +36,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      // 打包压缩配置
-      // viteCompression({
-      //   //gzip压缩
-      //   verbose: true,
-      //   disable: false,
-      //   threshold: 1024,
-      //   algorithm: 'gzip',
-      //   ext: '.gz'
-      // }),
       qiankun(name, {
         useDevMode
       }),
@@ -98,24 +63,24 @@ export default defineConfig(({ mode }) => {
       //   formats: ['umd'],
       // },
       // chunkSizeWarningLimit: 1500,大文件报警阈值设置,不建议使用
-      rollupOptions: {
-        output: {
-          //静态资源分类打包
-          chunkFileNames: 'static/js/[name]-[hash].js',
-          entryFileNames: 'static/js/[name]-[hash].js',
-          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
-          manualChunks(id) {
-            //静态资源分拆打包
-            if (id.includes('node_modules')) {
-              if (id.includes('react/')) {
-                console.log(id, id.toString().split('node_modules/')[1].split('/')[0].toString())
-              }
-              return id.toString().split('node_modules/')[1].split('/')[0].toString();
-            }
-          }
-          // inlineDynamicImports: true,
-        }
-      }
+      // rollupOptions: {
+      //   output: {
+      //     //静态资源分类打包
+      //     chunkFileNames: 'static/js/[name]-[hash].js',
+      //     entryFileNames: 'static/js/[name]-[hash].js',
+      //     assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+      //     manualChunks(id) {
+      //       //静态资源分拆打包
+      //       if (id.includes('node_modules')) {
+      //         if (id.includes('react/')) {
+      //           console.log(id, id.toString().split('node_modules/')[1].split('/')[0].toString())
+      //         }
+      //         return id.toString().split('node_modules/')[1].split('/')[0].toString();
+      //       }
+      //     }
+      //     // inlineDynamicImports: true,
+      //   }
+      // }
     }
   };
 })
