@@ -36,14 +36,6 @@ export default defineConfig(({ mode }) => {
         exposedHeaders: [
           'Access-Control-Allow-Origin: *',
         ],
-      },
-      proxy: {
-        '/api': {
-          // target: 'http://10.250.220.255:9091/api',  // 赵桥旺本地
-          target: 'https://console-test.playernetwork.intlgame.com/api', // 测试环境
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
-        }
       }
     },
     css: {
